@@ -1,0 +1,8 @@
+qwikidata
+transformers
+wikidata
+pandas
+difflib
+re
+bs4
+requests
