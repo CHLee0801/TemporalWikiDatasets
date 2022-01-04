@@ -6,3 +6,5 @@ difflib
 re
 bs4
 requests
+wikiextractor
+gensim
