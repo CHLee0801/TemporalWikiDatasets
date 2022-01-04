@@ -46,13 +46,13 @@ python wikipedia_datasets.py --mode 0 --old <previous_month> --new <new_month>
 or
 python wikipedia_datasets.py --mode 1 --tenth_digit <0-16> --month <month>
 ```
-> mode : 0 (generate datasets for only subsets)
-> old : year + month. ex) 20210801
-> new : year + month. ex) 20210901
+* mode : 0 (generate datasets for only subsets)
+* old : year + month. ex) 20210801
+* new : year + month. ex) 20210901
 
-> mode : 1 (generate datasets for entire datasets)
-> tenth_digit : One number between 0-16 (There are 16 sets of Wikipedia bundle)
-> month : year + month. ex) 20210801
+* mode : 1 (generate datasets for entire datasets)
+* tenth_digit : One number between 0-16 (There are 16 sets of Wikipedia bundle)
+* month : year + month. ex) 20210801
 
 We suggest you to use bash file for mode 1. You can easily modify example bash file.
 ``` 
@@ -70,11 +70,11 @@ You will have final csv file in directory below.
 ``` 
 python wikidata_datasets.py --mode <mode> --old <previous_month> --new <new_month> --idx <0-100> --combine <0 or 1>
 ```
-> mode : unchanged / updated / new
-> old : year + month. ex) 20210801
-> new : year + month. ex) 20210901
-> idx : One number between 0-100 (Preprocessing is held in every million entities of Wikidata)
-> combine : 0 (Not combining created sets by idx) / 1 (Combine all the sets to one json file)
+* mode : unchanged / updated / new
+* old : year + month. ex) 20210801
+* new : year + month. ex) 20210901
+* idx : One number between 0-100 (Preprocessing is held in every million entities of Wikidata)
+* combine : 0 (Not combining created sets by idx) / 1 (Combine all the sets to one json file)
 
 We suggest you to use bash file for this part. You can easily modify example bash file. 
 ``` 
@@ -89,10 +89,10 @@ bash wikidata_datasets.sh
 ``` 
 python evaluation_datasets.py --mode <mode> --old <previous_month> --new <new_month>
 ```
-> mode : unchanged / updated / new
-> old : year + month. ex) 20210801
-> new : year + month. ex) 20210901
+* mode : unchanged / updated / new
+* old : year + month. ex) 20210801
+* new : year + month. ex) 20210901
 
 You will have final csv file in directory below.
 
-> ../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.csv
+* ../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.csv
