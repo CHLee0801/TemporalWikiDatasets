@@ -4,6 +4,7 @@ import argparse
 import requests
 from bs4 import BeautifulSoup
 import time
+import random
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--mode', type=str, default="unchange", required=True)
@@ -139,10 +140,24 @@ def updated_new_filtering(old, new, mode):
             continue
 
         filtered_list.append(item_list[i])
+    
+    semi_list = []
+    for i in filtered_list:
+        if i in semi_list:
+            continue
+        else:
+            semi_list.append(i)
+
+    random.shuffle(semi_list)
+    final_list = []
+    data_list = random.sample(range(len(semi_list)), 10000)
+    for i in data_list:
+        if i in data_list:
+            final_list.append(semi_list[i])
 
     output_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.json"
     with open(output_dir, "w") as write_json_file:
-        json.dump(filtered_list, write_json_file, indent=4)
+        json.dump(final_list, write_json_file, indent=4)
 
 def unchanged_filtering(old, new, mode):
     item_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/total_{mode}_item.json"
@@ -192,9 +207,23 @@ def unchanged_filtering(old, new, mode):
             continue
         filtered_list.append(item_list[i])
     
+    semi_list = []
+    for i in filtered_list:
+        if i in semi_list:
+            continue
+        else:
+            semi_list.append(i)
+
+    random.shuffle(semi_list)
+    final_list = []
+    data_list = random.sample(range(len(semi_list)), 10000)
+    for i in data_list:
+        if i in data_list:
+            final_list.append(semi_list[i])
+    
     output_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.json"
     with open(output_dir, "w") as write_json_file:
-        json.dump(filtered_list, write_json_file, indent=4)
+        json.dump(final_list, write_json_file, indent=4)
 
 def json_to_csv(old, new, mode):
     item_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.json"
