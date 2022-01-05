@@ -19,6 +19,30 @@ conda activate twiki
 pip install -r requirements.txt
 ```
 
+* Some directories
+
+You have to choose two time step for Wikipedia and Wikidata (time step should be same for both).
+
+> old_time_step : year + month + date, e.g. 20210801
+> new_time_step : year + month + date, e.g. 20210901
+
+Then follow the command.
+```
+cd Wikipedia_datasets
+mkdir <old_time_step>
+mkdir <old_time_step>_gpt2
+mkdir <new_time_step>
+mkdir <new_time_stem>_gpt2
+cd ../
+cd Wikidata_datasets
+mkdir <old_time_step>
+mkdir <new_time_stem>
+mkdir <old_time_step>_<new_time_step>
+```
+
+Output would look like this.
+![Figure 2](https://user-images.githubusercontent.com/87512263/148151373-d1b65f7d-8a86-4419-838e-c9a8a996a88f.png)
+
 ## 0-1. Wikipedia Dump Download
 
 Please choose [Wikipedia Dump File](https://dumps.wikimedia.org/enwiki/) in XML format. (About 18 GB)
@@ -67,19 +91,19 @@ There are two types of generation at the end. One is GPT-2 training datasets, an
 ``` 
 python wikipedia_datasets.py --mode 0 --old <previous_month> --new <new_month>
 ```
-or
-```
-python wikipedia_datasets.py --mode 1 --tenth_digit <0-16> --month <month>
-```
 > mode : 0 (generate datasets for only subsets)   
 > old : year + month + date, e.g. 20210801   
 > new : year + month + date, e.g. 20210901   
 
+or
+```
+python wikipedia_datasets.py --mode 1 --tenth_digit <0-16> --month <month>
+```
 > mode : 1 (generate datasets for entire datasets)   
 > tenth_digit : One number between 0-16 (There are 16 sets of Wikipedia bundle)   
 > month : year + month + date, e.g. 20210801   
 
-We suggest you to use bash file for mode 1. You can easily modify example bash file and type command below in terminal.
+We suggest you to use bash file for mode 1. You can easily modify example bash file **wikipedia_datasets.sh** and type command below in terminal.
 ``` 
 bash wikipedia_datasets.sh
 ```
@@ -103,7 +127,7 @@ python wikidata_datasets.py --mode <mode> --old <previous_month> --new <new_mont
 > idx : One number between 0-100 (Preprocessing is held in every million entities of Wikidata)   
 > combine : 0 (Not combining created sets by idx) / 1 (Combine all the sets to one json file)   
 
-We suggest you to use bash file for this part. You can easily modify example bash file and type command below in terminal.
+We suggest you to use bash file for this part. You can easily modify example bash file **wikidata_datasets.sh** and type command below in terminal.
 ``` 
 bash wikidata_datasets.sh
 ```
