@@ -2,7 +2,9 @@
 
 ![Figure 1](https://user-images.githubusercontent.com/87512263/148145276-30afa286-110d-44aa-9ca4-dde3dc42fd75.png)
 
-This is an overview of this github repository. You have to download Wikipedia dumps first. And then you can work on Section 1. Wikipedia and Section 2. Wikidata at the same time. But you have to get both Section done to do Section 3. Alignment. 
+This is an overview of this github repository. 
+
+You have to download Wikipedia dumps first. And then you can work on **Section 1. Wikipedia** and **Section 2. Wikidata** at the same time. But you have to get both Section done to do **Section 3. Alignment**. 
 
 ## 0. Setting
 
