@@ -32,21 +32,39 @@ cd Wikipedia_datasets
 mkdir <old_time_step>
 mkdir <old_time_step>_gpt2
 mkdir <new_time_step>
-mkdir <new_time_stem>_gpt2
+mkdir <new_time_step>_gpt2
 cd ../
 cd Wikidata_datasets
 mkdir <old_time_step>
-mkdir <new_time_stem>
+mkdir <new_time_step>
 mkdir <old_time_step>_<new_time_step>
+```
+
+```
+cd <old_time_step>_<new_time_step>
+mkdir new
+cd new
+mkdir new_id
+mkdir new_item
+cd ../
+mkdir updated
+cd updated
+mkdir updated_id
+mkdir updated_item
+cd ../
+mkdir unchanged
+cd unchanged
+mkdir unchanged_id
+mkdir unchanged_item
 ```
 
 Output would look like this.
 
-![Figure 2](https://user-images.githubusercontent.com/87512263/148151373-d1b65f7d-8a86-4419-838e-c9a8a996a88f.png)
+![Figure 2](https://user-images.githubusercontent.com/87512263/148153535-92d6ab22-43a0-405b-b9aa-f78fd9da30b7.png)
 
 ## 0-1. Wikipedia Dump Download
 
-Please choose [Wikipedia Dump File](https://dumps.wikimedia.org/enwiki/) in XML format. (About 18 GB)
+Please download [Wikipedia Dump File](https://dumps.wikimedia.org/enwiki/) in XML format (About 18 GB). You have to download for both time step (old_time_step, new_time_step).
 e.g. [https://dumps.wikimedia.org/enwiki/20211001/enwiki-20211001-pages-articles-multistream.xml.bz2](https://dumps.wikimedia.org/enwiki/20211001/enwiki-20211001-pages-articles-multistream.xml.bz2)
 
 Execute the command.
@@ -64,7 +82,7 @@ python -m wikiextractor.WikiExtractor <Wikipedia dump file>
 
 ## 0-2. Wikidata Dump Download
 
-Please choose [Wikidata Dump File](https://dumps.wikimedia.org/wikidatawiki/) in XML format. (About 120 GB)
+Please choose [Wikidata Dump File](https://dumps.wikimedia.org/wikidatawiki/) in XML format (About 120 GB). You have to download for both time step (old_time_step, new_time_step).
 e.g. [https://dumps.wikimedia.org/wikidatawiki/20211001/wikidatawiki-20211001-pages-articles-multistream.xml.bz2](https://dumps.wikimedia.org/wikidatawiki/20211001/wikidatawiki-20211001-pages-articles-multistream.xml.bz2)
 
 ```
@@ -92,6 +110,7 @@ There are two types of generation at the end. One is GPT-2 training datasets, an
 ``` 
 python wikipedia_datasets.py --mode 0 --old <previous_month> --new <new_month>
 ```
+**Generate datasets for only subsets**
 > mode : 0 (generate datasets for only subsets)   
 > old : year + month + date, e.g. 20210801   
 > new : year + month + date, e.g. 20210901   
@@ -100,6 +119,7 @@ or
 ```
 python wikipedia_datasets.py --mode 1 --tenth_digit <0-16> --month <month>
 ```
+**Generate datasets for entire datasets**
 > mode : 1 (generate datasets for entire datasets)   
 > tenth_digit : One number between 0-16 (There are 16 sets of Wikipedia bundle)   
 > month : year + month + date, e.g. 20210801   

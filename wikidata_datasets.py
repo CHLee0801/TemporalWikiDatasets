@@ -434,7 +434,7 @@ combine = arg.combine # combine : 0 (Not combining created sets by idx) / 1 (Com
 if idx != -1:
     extraction(old, idx) # Extract Wikidata id of previous month
     extraction(new, idx) # Extract Wikidata id of new month
-    id(old, new, idx, mode) # Filter Unchanged, Updated or New factual instances by id.
+    id(old, new, idx, mode) # Filter Unchanged, Updated or New factual instances by id
     name(old, new, idx, mode) # Mapping id to string item by using 'WikiMapper'
 
 if combine == 1:
