@@ -50,7 +50,7 @@ It will take about 7-8 hours to download the file.
 ```
 python -m gensim.scripts.segment_wiki -i -f <Wikidata Dump file> -o <Transformed file>
 ```
-> <"Transformed file"> : 'wikidata-{year+month+date}.json.gz' e.g. wikidata-20210801.json.gz
+> <'Transformed file'> : 'wikidata-{year+month+date}.json.gz' e.g. wikidata-20210801.json.gz
 
 * It is important to write 'json.gz' at the end for your new file.
 
@@ -123,4 +123,4 @@ python evaluation_datasets.py --mode <mode> --old <previous_month> --new <new_mo
 
 You will have final csv file in directory below.
 
-- ../TemporalWiki_datasets/Wikidata_datasets/<previous_month>\_<new_month>/<"mode">/final_<"mode">_item.csv
+- ../TemporalWiki_datasets/Wikidata_datasets/<'previous_month'>\_<'new_month'>/<'mode'>/final_<'mode'>_item.csv
