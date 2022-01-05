@@ -1,5 +1,7 @@
 # TemporalWiki Datasets
 
+![Figure 1](/mnt/nfs/changho/figure1.png)
+
 ## 0. Setting
 
 * Python environment 3.9
@@ -33,7 +35,7 @@ python -m wikiextractor.WikiExtractor <Wikipedia dump file>
 
 ## 0-2. Wikidata Dump Download
 
-Please download [Wikidata Dump File](https://dumps.wikimedia.org/wikidatawiki/) in XML format. (About 120 GB)
+Please choose [Wikidata Dump File](https://dumps.wikimedia.org/wikidatawiki/) in XML format. (About 120 GB)
 e.g. [https://dumps.wikimedia.org/wikidatawiki/20211001/wikidatawiki-20211001-pages-articles-multistream.xml.bz2](https://dumps.wikimedia.org/wikidatawiki/20211001/wikidatawiki-20211001-pages-articles-multistream.xml.bz2)
 
 ```
@@ -45,7 +47,7 @@ It will take about 7-8 hours to download the file.
 
 ```
 python -m gensim.scripts.segment_wiki -i -f <Wikidata Dump file> -o <Transformed file>
-<Transformed file> : 'wikidata-{year+month+date}.json.gz'
+<Transformed file> : 'wikidata-{year+month+date}.json.gz' e.g. wikidata-20210801.json.gz
 ```
 
 * It is important to write 'json.gz' at the end for your new file.
@@ -69,7 +71,7 @@ python wikipedia_datasets.py --mode 1 --tenth_digit <0-16> --month <month>
 > tenth_digit : One number between 0-16 (There are 16 sets of Wikipedia bundle)   
 > month : year + month + date, e.g. 20210801   
 
-We suggest you to use bash file for mode 1. You can easily modify example bash file.
+We suggest you to use bash file for mode 1. You can easily modify example bash file and type command below in terminal.
 ``` 
 bash wikipedia_datasets.sh
 ```
@@ -91,7 +93,7 @@ python wikidata_datasets.py --mode <mode> --old <previous_month> --new <new_mont
 > idx : One number between 0-100 (Preprocessing is held in every million entities of Wikidata)   
 > combine : 0 (Not combining created sets by idx) / 1 (Combine all the sets to one json file)   
 
-We suggest you to use bash file for this part. You can easily modify example bash file. 
+We suggest you to use bash file for this part. You can easily modify example bash file and type command below in terminal.
 ``` 
 bash wikidata_datasets.sh
 ```
