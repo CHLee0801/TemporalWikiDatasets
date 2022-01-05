@@ -41,6 +41,7 @@ mkdir <old_time_step>_<new_time_step>
 ```
 
 Output would look like this.
+
 ![Figure 2](https://user-images.githubusercontent.com/87512263/148151373-d1b65f7d-8a86-4419-838e-c9a8a996a88f.png)
 
 ## 0-1. Wikipedia Dump Download
