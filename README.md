@@ -1,6 +1,6 @@
 # TemporalWiki Datasets
 
-![Figure 1](/mnt/nfs/changho/figure1.png)
+![Figure 1](https://user-images.githubusercontent.com/87512263/148145276-30afa286-110d-44aa-9ca4-dde3dc42fd75.png)
 
 ## 0. Setting
 
