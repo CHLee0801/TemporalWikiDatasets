@@ -421,21 +421,21 @@ def merge(old, new):
     with open(item_fname, "w") as write_json_file_2:
         json.dump(big_item_list, write_json_file_2, indent=4)
 
-mode = arg.mode
+mode = arg.mode # mode : unchanged / updated / new
 if mode != "unchanged" and mode != "updated" and mode != "new":
     print("You typed in wrong mode!")
     exit()
 
-old = arg.old 
-new = arg.new 
-idx = arg.idx
-combine = arg.combine
+old = arg.old # old : year + month + date, e.g. 20210801
+new = arg.new # new : year + month + date, e.g. 20210901
+idx = arg.idx # idx : One number between 0-100 (Preprocessing is held in every million entities of Wikidata)
+combine = arg.combine # combine : 0 (Not combining created sets by idx) / 1 (Combine all the sets to one json file)
 
 if idx != -1:
-    extraction(old, idx)
-    extraction(new, idx)
-    id(old, new, idx, mode)
-    name(old, new, idx, mode)
+    extraction(old, idx) # Extract Wikidata id of previous month
+    extraction(new, idx) # Extract Wikidata id of new month
+    id(old, new, idx, mode) # Filter Unchanged, Updated or New factual instances by id.
+    name(old, new, idx, mode) # Mapping id to string item by using 'WikiMapper'
 
 if combine == 1:
-    merge(old, new)
+    merge(old, new) 

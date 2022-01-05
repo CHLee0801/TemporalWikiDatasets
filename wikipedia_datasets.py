@@ -243,18 +243,18 @@ def size_of_wikipedia(month):
 
 mode = arg.mode
 
-if mode == 0:
-    old = arg.old 
-    new = arg.new 
+if mode == 0: # mode : 0 (generate datasets for only subsets)
+    old = arg.old # old : year + month + date, e.g. 20210801
+    new = arg.new # new : year + month + date, e.g. 20210901
     print("Generating subset mode. Make sure you typed in \"old\" and \"new\" in command line")
     generate_subsets_csv(old, new)
     print("Generating subsets in csv file completed!") # Ready to be aligned with Wikidata
 
     generate_gpt2_subset(old, new)
     print("Generating GPT-2 training datasets for subsets is completed!") # Final Wikipedia subsets for training GPT-2
-elif mode == 1:
-    month = arg.month
-    tenth_digit = arg.tenth_digit
+elif mode == 1: # mode : 1 (generate datasets for entire datasets)
+    tenth_digit = arg.tenth_digit # tenth_digit : One number between 0-16 (There are 16 sets of Wikipedia bundle)
+    month = arg.month # month : year + month + date, e.g. 20210801
 
     wikipedia_size = size_of_wikipedia(month)
     generate_gpt2_data(month, tenth_digit)

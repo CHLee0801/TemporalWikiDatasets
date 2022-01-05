@@ -84,9 +84,9 @@ def aligning(old, new, mode):
     filtered_name = []
 
     for j in range(len(id_list)):
-        if id_list[j][0] not in mapping_dict: # id_list[j][0] = wikidata_id, big_dict = wikidata_id, wikipedia_id
+        if id_list[j][0] not in mapping_dict: 
             continue
-        wikipedia_id = mapping_dict[id_list[j][0]] # wikipedia_id
+        wikipedia_id = mapping_dict[id_list[j][0]]
         if wikipedia_id not in id_text_dict:
             continue
         filtered_id.append(id_list[j])
@@ -236,17 +236,18 @@ def json_to_csv(old, new, mode):
     output_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.csv"
     pd.DataFrame(f_list, columns=['subject','relation','objective']).to_csv(output_dir, index=False)
 
-mode = arg.mode
-old = arg.old 
-new = arg.new 
+mode = arg.mode # mode : unchanged / updated / new
+old = arg.old # old : year + month + date, e.g. 20210801
+new = arg.new # new : year + month + date, e.g. 20210901
+
+wikipedia_csv_to_json(old, new) # Change csv file to json
 
 if mode == "unchanged":
-    unchanged_filtering(old, new, mode)
-    json_to_csv(old, new, mode)
-else:
-    wikipedia_csv_to_json(old, new)
-    crawling(old, new)
-    aligning(old, new, mode)
-    updated_new_filtering(old, new, mode)
-    json_to_csv(old, new, mode)
+    unchanged_filtering(old, new, mode) # Unchange heuristic filtering
+else: # If mode is updated or new
+    crawling(old, new) # Crawl Wikidata id for corresponding Wikipedia page-id
+    aligning(old, new, mode) # Map Wikipedia to Wikidata
+    updated_new_filtering(old, new, mode) # Updated or New heuristic filtering
+
+json_to_csv(old, new, mode)
 
