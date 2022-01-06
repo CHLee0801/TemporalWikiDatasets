@@ -108,19 +108,19 @@ There are two types of generation at the end. One is GPT-2 training datasets, an
 #### wikipedia_datasets.py
 
 ``` 
-python wikipedia_datasets.py --mode 0 --old <previous_month> --new <new_month>
+python wikipedia_datasets.py --mode subset --old <previous_month> --new <new_month>
 ```
 **Generate datasets for only subsets**
-> mode : 0 (generate datasets for only subsets)   
+> mode : subset (generate datasets for only subsets)   
 > old : year + month + date, e.g. 20210801   
 > new : year + month + date, e.g. 20210901   
 
 or
 ```
-python wikipedia_datasets.py --mode 1 --tenth_digit <0-16> --month <month>
+python wikipedia_datasets.py --mode entire --tenth_digit <0-16> --month <month>
 ```
 **Generate datasets for entire datasets**
-> mode : 1 (generate datasets for entire datasets)   
+> mode : entire (generate datasets for entire datasets)   
 > tenth_digit : One number between 0-16 (There are 16 sets of Wikipedia bundle)   
 > month : year + month + date, e.g. 20210801   
 
