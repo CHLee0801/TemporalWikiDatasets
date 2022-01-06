@@ -6,11 +6,17 @@ from bs4 import BeautifulSoup
 import time
 import random
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--mode', type=str, default="unchange", required=True)
-parser.add_argument('--old', type=str, default='20210801')
-parser.add_argument('--new', type=str, default='20210901')
-arg = parser.parse_args()
+SUPPORT_MODE=["unchanged", "new", "updated"]
+
+def construct_generation_args():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mode', type=str, default="unchange", required=True)
+    parser.add_argument('--old', type=str, default='20210801')
+    parser.add_argument('--new', type=str, default='20210901')
+    arg = parser.parse_args()
+    
+    return arg
 
 def wikipedia_csv_to_json(old, new):
     file_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old}_{new}_subset.csv"
@@ -236,18 +242,23 @@ def json_to_csv(old, new, mode):
     output_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.csv"
     pd.DataFrame(f_list, columns=['subject','relation','objective']).to_csv(output_dir, index=False)
 
-mode = arg.mode # mode : unchanged / updated / new
-old = arg.old # old : year + month + date, e.g. 20210801
-new = arg.new # new : year + month + date, e.g. 20210901
+def main():
+    arg = construct_generation_args()
+    
+    mode = arg.mode # mode : unchanged / updated / new
+    old = arg.old # old : year + month + date, e.g. 20210801
+    new = arg.new # new : year + month + date, e.g. 20210901
 
-wikipedia_csv_to_json(old, new) # Change csv file to json
+    wikipedia_csv_to_json(old, new) # Change csv file to json
 
-if mode == "unchanged":
-    unchanged_filtering(old, new, mode) # Unchange heuristic filtering
-else: # If mode is updated or new
-    crawling(old, new) # Crawl Wikidata id for corresponding Wikipedia page-id
-    aligning(old, new, mode) # Map Wikipedia to Wikidata
-    updated_new_filtering(old, new, mode) # Updated or New heuristic filtering
+    if mode == "unchanged":
+        unchanged_filtering(old, new, mode) # Unchange heuristic filtering
+    else: # If mode is updated or new
+        crawling(old, new) # Crawl Wikidata id for corresponding Wikipedia page-id
+        aligning(old, new, mode) # Map Wikipedia to Wikidata
+        updated_new_filtering(old, new, mode) # Updated or New heuristic filtering
 
-json_to_csv(old, new, mode)
+    json_to_csv(old, new, mode)
 
+if __name__ == '__main__':
+    main()
