@@ -6,65 +6,37 @@ from bs4 import BeautifulSoup
 import time
 import random
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--mode', type=str, default="unchange", required=True)
-parser.add_argument('--old', type=str, default='20210801')
-parser.add_argument('--new', type=str, default='20210901')
-arg = parser.parse_args()
+SUPPORT_MODE=["unchanged", "new", "updated"]
 
-def wikipedia_csv_to_json(old, new):
-    file_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old}_{new}_subset.csv"
-    df = pd.read_csv(file_dir, encoding='utf-8')
+def construct_generation_args():
 
-    wikipedia_subsets = {}
-    list_item = df.values.tolist()
-
-    for i in list_item:
-        id = str(i[1])
-        id = id[36:]
-        text = str(i[3]).lower()
-        if id not in wikipedia_subsets:
-            wikipedia_subsets[id] = []
-            wikipedia_subsets[id].append(text)
-        else:
-            wikipedia_subsets[id].append(text)
-
-    output_file_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old}_{new}_subset.json"
-    with open(output_file_dir, "w") as write_json_file:
-        json.dump(wikipedia_subsets, write_json_file, indent=4)
-
-def crawling(old, new):
-    file_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old}_{new}_subset.json"
-    with open(file_dir, "r") as read_json_file:
-        wikipedia_list = json.load(read_json_file)
-
-    wikipedia_to_wikidata = {}
-    wikipedia_id = []
-    base_url = "https://en.wikipedia.org/wiki?curid="
-
-    for id in wikipedia_list:
-        wikipedia_id.append(id)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mode', type=str, default="unchange", required=True)
+    parser.add_argument('--old', type=str, default='20210801')
+    parser.add_argument('--new', type=str, default='20210901')
+    arg = parser.parse_args()
     
-    for i in range(len(wikipedia_id)):
-        try:
-            url = base_url + wikipedia_id[i]
-            response = requests.get(url)
-            html = response.text
-            soup = BeautifulSoup(html, 'html.parser')
-            a = soup.select_one("#t-wikibase > a")
-            wikidata_id = str(a)[72:-92]
-            wikipedia_to_wikidata[wikidata_id] = wikipedia_id[i]
-        except:
-            time.sleep(1)
-            i -= 1
+    return arg
 
-    output_file_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/Wikipedia_to_Wikidata.json"
-    with open(output_file_dir, "w") as write_json_file:
+def combine_json(old, new):
+    wikipedia_to_wikidata = {}
+    for i in range(10):
+        idx = str(i)
+        input_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/Wikipedia_to_Wikidata_{idx}.json"
+        with open(input_dir, "r") as read:
+            small_list = json.load(read)
+        for j in small_list:
+            if j in wikipedia_to_wikidata:
+                continue
+            wikipedia_to_wikidata[j] = small_list[j]
+
+    output_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/Wikipedia_to_Wikidata_total.json"
+    with open(output_dir, "w") as write_json_file:
         json.dump(wikipedia_to_wikidata, write_json_file, indent=4)
 
 def aligning(old, new, mode):
     subset_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old}_{new}_subset.json"
-    wikidata_to_wikipedia = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/Wikipedia_to_Wikidata.json"
+    wikidata_to_wikipedia = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/Wikipedia_to_Wikidata_total.json"
     id_fname = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/total_{mode}_id.json"
     item_fname = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/total_{mode}_item.json"
 
@@ -89,75 +61,31 @@ def aligning(old, new, mode):
         wikipedia_id = mapping_dict[id_list[j][0]]
         if wikipedia_id not in id_text_dict:
             continue
-        filtered_id.append(id_list[j])
-        filtered_name.append(item_list[j])
+        object = item_list[j][2].lower()
+        sub = ""
+        rel = ""
+        obj = ""
+        text = str(id_text_dict[wikipedia_id])
+        text = text.lower()
+        if object in text:
+            print(wikipedia_id, name_list[j])
+            for i in item_list[j][0]:
+                if i == ',':
+                    continue
+                sub += i
+            for i in item_list[j][1]:
+                if i == ',':
+                    continue
+                rel += i
+            for i in item_list[j][2]:
+                if i == ',':
+                    continue
+                obj += i
+            filtered_name.append([sub, rel, obj])
 
-    output_id_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/aligned_{mode}_id.json"
-    output_item_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/aligned_{mode}_item.json"
-
-    with open(output_id_dir, "w") as write_json_file:
-        json.dump(filtered_id, write_json_file, indent=4)
-    with open(output_item_dir, "w") as write_json_file:
-        json.dump(filtered_name, write_json_file, indent=4)
-
-def updated_new_filtering(old, new, mode):
-    item_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/aligned_{mode}_item.json"
-    with open(item_dir, "r") as read:
-        item_list = json.load(read)
-    filtered_list = []
+    output_item_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.scv"
     
-    for i in range(len(item_list)):
-        rel = item_list[i][1]
-        sub = item_list[i][0].lower()
-        obj = item_list[i][2].lower()
-        if "untitled" in sub or "untitled" in obj:
-            continue
-        if rel.lower() in obj:
-            continue
-        if len(sub.split()) > 5 or len(obj.split()) > 5:
-            continue
-        if sub in obj or obj in sub:
-            continue
-        if ',' in obj or ',' in sub or ',' in rel :
-            continue
-        cnt1 = 0
-        cnt2 = 0
-        for j in sub:
-            try:
-                j.encode('ascii')
-            except:
-                cnt1 += 1
-                continue
-        if len(j) == cnt1:
-            continue
-        for k in obj:
-            try:
-                k.encode('ascii')
-            except:
-                cnt2 += 1
-                continue
-        if len(k) == cnt2:
-            continue
-
-        filtered_list.append(item_list[i])
-    
-    semi_list = []
-    for i in filtered_list:
-        if i in semi_list:
-            continue
-        else:
-            semi_list.append(i)
-
-    random.shuffle(semi_list)
-    final_list = []
-    data_list = random.sample(range(len(semi_list)), 10000)
-    for i in data_list:
-        if i in data_list:
-            final_list.append(semi_list[i])
-
-    output_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.json"
-    with open(output_dir, "w") as write_json_file:
-        json.dump(final_list, write_json_file, indent=4)
+    pd.DataFrame(filtered_name, columns=['subject','relation','objective']).to_csv(output_item_dir, index=False)
 
 def unchanged_filtering(old, new, mode):
     item_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/total_{mode}_item.json"
@@ -221,33 +149,22 @@ def unchanged_filtering(old, new, mode):
         if i in data_list:
             final_list.append(semi_list[i])
     
-    output_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.json"
-    with open(output_dir, "w") as write_json_file:
-        json.dump(final_list, write_json_file, indent=4)
+    output_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.scv"
 
-def json_to_csv(old, new, mode):
-    item_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.json"
-    with open(item_dir, "r") as read_json_file_2:
-        final = json.load(read_json_file_2)
+    pd.DataFrame(final_list, columns=['subject','relation','objective']).to_csv(output_dir, index=False)
 
-    f_list= []
-    for i in range(len(final)):
-        f_list.append(final[i])
-    output_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.csv"
-    pd.DataFrame(f_list, columns=['subject','relation','objective']).to_csv(output_dir, index=False)
+def main():
+    arg = construct_generation_args()
+    
+    mode = arg.mode # mode : unchanged / updated / new
+    old = arg.old # old : year + month + date, e.g. 20210801
+    new = arg.new # new : year + month + date, e.g. 20210901
 
-mode = arg.mode # mode : unchanged / updated / new
-old = arg.old # old : year + month + date, e.g. 20210801
-new = arg.new # new : year + month + date, e.g. 20210901
+    if mode == "unchanged":
+        unchanged_filtering(old, new, mode) # Unchange heuristic filtering
+    else: # If mode is updated or new
+        combine_json(old, new)
+        aligning(old, new, mode) # Map Wikipedia to Wikidata
 
-wikipedia_csv_to_json(old, new) # Change csv file to json
-
-if mode == "unchanged":
-    unchanged_filtering(old, new, mode) # Unchange heuristic filtering
-else: # If mode is updated or new
-    crawling(old, new) # Crawl Wikidata id for corresponding Wikipedia page-id
-    aligning(old, new, mode) # Map Wikipedia to Wikidata
-    updated_new_filtering(old, new, mode) # Updated or New heuristic filtering
-
-json_to_csv(old, new, mode)
-
+if __name__ == '__main__':
+    main()

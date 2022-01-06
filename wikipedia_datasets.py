@@ -1,5 +1,6 @@
 import pandas as pd 
 import re
+import json
 from difflib import Differ
 import os 
 from argparse import ArgumentParser
@@ -143,6 +144,28 @@ def generate_subsets_csv(old_month, new_month):
     output_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{data_dir2}_{data_dir1}_subset.csv"
     pd.DataFrame(entries, columns=['id','url','title','text']).to_csv(output_dir, index=False) # save it as csv
 
+def wikipedia_csv_to_json(old, new):
+    file_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old}_{new}_subset.csv"
+    df = pd.read_csv(file_dir, encoding='utf-8')
+
+    wikipedia_subsets = {}
+    list_item = df.values.tolist()
+
+    for i in list_item:
+        id = str(i[1])
+        id = id[36:]
+        text = str(i[3]).lower()
+        if id not in wikipedia_subsets:
+            wikipedia_subsets[id] = []
+            wikipedia_subsets[id].append(text)
+        else:
+            wikipedia_subsets[id].append(text)
+
+    output_file_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old}_{new}_subset.json"
+    with open(output_file_dir, "w") as write_json_file:
+        json.dump(wikipedia_subsets, write_json_file, indent=4)
+    
+
 def process_article(title, text):
     # Configurations
     length_limit = 512 #The limit of words per input instance. 512 is the maximum
@@ -258,7 +281,8 @@ def main():
         new = arg.new # new : year + month + date, e.g. 20210901
         print("Generating subset mode. Make sure you typed in \"old\" and \"new\" in command line")
         generate_subsets_csv(old, new)
-        print("Generating subsets in csv file completed!") # Ready to be aligned with Wikidata
+        wikipedia_csv_to_json(old, new)
+        print("Generating subsets in csv, json file completed!") # Ready to be aligned with Wikidata
 
         generate_gpt2_subset(old, new)
         print("Generating GPT-2 training datasets for subsets is completed!") # Final Wikipedia subsets for training GPT-2
