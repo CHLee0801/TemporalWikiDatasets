@@ -68,7 +68,6 @@ def aligning(old, new, mode):
         text = str(id_text_dict[wikipedia_id])
         text = text.lower()
         if object in text:
-            print(wikipedia_id, name_list[j])
             for i in item_list[j][0]:
                 if i == ',':
                     continue
