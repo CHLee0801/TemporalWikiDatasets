@@ -3,15 +3,21 @@ import json
 from qwikidata.json_dump import WikidataJsonDump
 from wikidata.client import Client
 
-client = Client()
-parser = argparse.ArgumentParser()
-parser.add_argument('--mode', type=str, default="unchange", required=True)
-parser.add_argument('--old', type=str, default='20210801')
-parser.add_argument('--new', type=str, default='20210901')
-parser.add_argument('--idx', type=int, default=0)
-parser.add_argument('--combine', type=int, default=0)
+SUPPROT_MODE = ["unchanged", "new", "updated"]
 
-arg = parser.parse_args()
+client = Client()
+
+def construct_generation_args():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mode', type=str, default="unchanged", required=True, choices=SUPPORT_MODE)
+    parser.add_argument('--old', type=str, default='20210801')
+    parser.add_argument('--new', type=str, default='20210901')
+    parser.add_argument('--idx', type=int, default=0)
+    parser.add_argument('--combine', type=int, default=0)
+
+    arg = parser.parse_args()
+    return arg
 
 def extraction(month, idx):
     dump_location = f"../TemporalWiki_datasets/Wikidata_datasets/wikidata-{month}.json.gz"
@@ -420,22 +426,28 @@ def merge(old, new):
         json.dump(big_id_list, write_json_file_1, indent=4) 
     with open(item_fname, "w") as write_json_file_2:
         json.dump(big_item_list, write_json_file_2, indent=4)
+        
+def main():
+    arg = construct_generation_args()
 
-mode = arg.mode # mode : unchanged / updated / new
-if mode != "unchanged" and mode != "updated" and mode != "new":
-    print("You typed in wrong mode!")
-    exit()
+    mode = arg.mode # mode : unchanged / updated / new
+    if mode != "unchanged" and mode != "updated" and mode != "new":
+        print("You typed in wrong mode!")
+        exit()
 
-old = arg.old # old : year + month + date, e.g. 20210801
-new = arg.new # new : year + month + date, e.g. 20210901
-idx = arg.idx # idx : One number between 0-100 (Preprocessing is held in every million entities of Wikidata)
-combine = arg.combine # combine : 0 (Not combining created sets by idx) / 1 (Combine all the sets to one json file)
+    old = arg.old # old : year + month + date, e.g. 20210801
+    new = arg.new # new : year + month + date, e.g. 20210901
+    idx = arg.idx # idx : One number between 0-100 (Preprocessing is held in every million entities of Wikidata)
+    combine = arg.combine # combine : 0 (Not combining created sets by idx) / 1 (Combine all the sets to one json file)
 
-if idx != -1:
-    extraction(old, idx) # Extract Wikidata id of previous month
-    extraction(new, idx) # Extract Wikidata id of new month
-    id(old, new, idx, mode) # Filter Unchanged, Updated or New factual instances by id
-    name(old, new, idx, mode) # Mapping id to string item by using 'WikiMapper'
+    if idx != -1:
+        extraction(old, idx) # Extract Wikidata id of previous month
+        extraction(new, idx) # Extract Wikidata id of new month
+        id(old, new, idx, mode) # Filter Unchanged, Updated or New factual instances by id
+        name(old, new, idx, mode) # Mapping id to string item by using 'WikiMapper'
 
-if combine == 1:
-    merge(old, new) 
+    if combine == 1:
+        merge(old, new) 
+        
+if __name__ == '__main__':
+    main()
