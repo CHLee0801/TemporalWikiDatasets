@@ -5,17 +5,24 @@ import os
 from argparse import ArgumentParser
 from transformers import GPT2Tokenizer
 
-parser = ArgumentParser()
-parser.add_argument('--mode', default=0, type=int, requires=True)
-parser.add_argument('--old', default='20210801', type=str, required=False)
-parser.add_argument('--new', default='20210901', type=str, required=False)
-parser.add_argument('--month', default="20210801", type=str, required=False)
-parser.add_argument('--tenth_digit', default=0, type=int, required=False)
-arg = parser.parse_args()
+SUPPORT_MODE= ["subset", "entire"]
 
 differ = Differ()
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2-large")
+
+def construct_generation_args():
+
+    parser = ArgumentParser()
+    parser.add_argument('--mode', default="subset", type=str, requires=True, choices=SUPPORT_MODE)
+    #parser.add_argument('--mode', default=0, type=int, requires=True)
+    parser.add_argument('--old', default='20210801', type=str, required=False)
+    parser.add_argument('--new', default='20210901', type=str, required=False)
+    parser.add_argument('--month', default="20210801", type=str, required=False)
+    parser.add_argument('--tenth_digit', default=0, type=int, required=False)
+    arg = parser.paargrse_args()
+    return arg
+
 
 def preprocess(lst):
     new_lst = []
@@ -241,33 +248,39 @@ def size_of_wikipedia(month):
         cnt += 1
     return cnt
 
-mode = arg.mode
+def main():
+    arg = construct_generation_args
 
-if mode == 0: # mode : 0 (generate datasets for only subsets)
-    old = arg.old # old : year + month + date, e.g. 20210801
-    new = arg.new # new : year + month + date, e.g. 20210901
-    print("Generating subset mode. Make sure you typed in \"old\" and \"new\" in command line")
-    generate_subsets_csv(old, new)
-    print("Generating subsets in csv file completed!") # Ready to be aligned with Wikidata
+    mode = arg.mode
 
-    generate_gpt2_subset(old, new)
-    print("Generating GPT-2 training datasets for subsets is completed!") # Final Wikipedia subsets for training GPT-2
-elif mode == 1: # mode : 1 (generate datasets for entire datasets)
-    tenth_digit = arg.tenth_digit # tenth_digit : One number between 0-16 (There are 16 sets of Wikipedia bundle)
-    month = arg.month # month : year + month + date, e.g. 20210801
+    if mode == "subset": # mode : 0 (generate datasets for only subsets)
+        old = arg.old # old : year + month + date, e.g. 20210801
+        new = arg.new # new : year + month + date, e.g. 20210901
+        print("Generating subset mode. Make sure you typed in \"old\" and \"new\" in command line")
+        generate_subsets_csv(old, new)
+        print("Generating subsets in csv file completed!") # Ready to be aligned with Wikidata
 
-    wikipedia_size = size_of_wikipedia(month)
-    generate_gpt2_data(month, tenth_digit)
+        generate_gpt2_subset(old, new)
+        print("Generating GPT-2 training datasets for subsets is completed!") # Final Wikipedia subsets for training GPT-2
+    elif mode == "entire": # mode : 1 (generate datasets for entire datasets)
+        tenth_digit = arg.tenth_digit # tenth_digit : One number between 0-16 (There are 16 sets of Wikipedia bundle)
+        month = arg.month # month : year + month + date, e.g. 20210801
 
-    data_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/{month}_gpt2"
-    lst = os.listdir(data_dir)
-    lst.sort()
-    cnt = 0
-    for dir in lst:
-        cnt += 1
-    if wikipedia_size == cnt:
-        combine_csv(month)
-        print("Datasets", tenth_digit, "has been completed.")
-        print("Generating GPT-2 training datasets for entire data is completed!") # Final Wikipedia datasets for training GPT-2
-    else:
-        print("Datasets", tenth_digit, "has been completed. Please wait for others to finish")
+        wikipedia_size = size_of_wikipedia(month)
+        generate_gpt2_data(month, tenth_digit)
+
+        data_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/{month}_gpt2"
+        lst = os.listdir(data_dir)
+        lst.sort()
+        cnt = 0
+        for dir in lst:
+            cnt += 1
+        if wikipedia_size == cnt:
+            combine_csv(month)
+            print("Datasets", tenth_digit, "has been completed.")
+            print("Generating GPT-2 training datasets for entire data is completed!") # Final Wikipedia datasets for training GPT-2
+        else:
+            print("Datasets", tenth_digit, "has been completed. Please wait for others to finish")
+
+if __name__ == "__main__":
+    main()
