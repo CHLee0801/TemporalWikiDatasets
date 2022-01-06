@@ -79,6 +79,7 @@ Execute command.
 ```
 python -m wikiextractor.WikiExtractor <Wikipedia dump file>
 ```
+After that, "text" file will be generated. Please change this name to 'year + month + date', e.g. 20210801
 
 ## 0-2. Wikidata Dump Download
 

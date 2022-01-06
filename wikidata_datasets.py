@@ -3,7 +3,7 @@ import json
 from qwikidata.json_dump import WikidataJsonDump
 from wikidata.client import Client
 
-SUPPROT_MODE = ["unchanged", "new", "updated"]
+SUPPORT_MODE = ["unchanged", "new", "updated"]
 
 client = Client()
 
@@ -399,7 +399,7 @@ def name(old, new, idx, mode):
         with open(id_dir, "w") as write_json_file_2:
             json.dump(new_id, write_json_file_2, indent=4)
 
-def merge(old, new):
+def merge(old, new, mode):
 
     big_id_list = []
     big_item_list = []
@@ -447,7 +447,7 @@ def main():
         name(old, new, idx, mode) # Mapping id to string item by using 'WikiMapper'
 
     if combine == 1:
-        merge(old, new) 
+        merge(old, new, mode) 
         
 if __name__ == '__main__':
     main()
