@@ -19,38 +19,37 @@ conda activate twiki
 pip install -r requirements.txt
 ```
 
-* Some directories
+* Organize directories
 
 You have to choose two time step for Wikipedia and Wikidata (time step should be same for both).
 
-> old_time_step : year + month + date, e.g. 20210801
+> old_time_step : year + month + date, e.g. 20210801   
 > new_time_step : year + month + date, e.g. 20210901
 
 Then follow the command.
 ```
 cd Wikipedia_datasets
-mkdir <old_time_step>
 mkdir <old_time_step>_gpt2
-mkdir <new_time_step>
 mkdir <new_time_step>_gpt2
+
 cd ../
 cd Wikidata_datasets
 mkdir <old_time_step>
 mkdir <new_time_step>
 mkdir <old_time_step>_<new_time_step>
-```
 
-```
 cd <old_time_step>_<new_time_step>
 mkdir new
 cd new
 mkdir new_id
 mkdir new_item
+
 cd ../
 mkdir updated
 cd updated
 mkdir updated_id
 mkdir updated_item
+
 cd ../
 mkdir unchanged
 cd unchanged
@@ -80,6 +79,12 @@ Execute command.
 python -m wikiextractor.WikiExtractor <Wikipedia dump file> --json
 ```
 After that, "text" file will be generated. Please change this name to 'year + month + date', e.g. 20210801
+```
+cd Wikipedia_datasets
+mv text <time_step>
+```
+
+This extracting process takes about 6 hours.
 
 ## 0-2. Wikidata Dump Download
 
@@ -104,9 +109,7 @@ It will take 2 days.
 
 ## 1. Wikipedia
 
-There are two types of generation at the end. One is GPT-2 training datasets, and the other is Wikipedia subsets which will be used in Section 3. Alignment. 
-
-#### wikipedia_datasets.py
+There are two types of generation at the end. One is GPT-2 training datasets, and the other is Wikipedia subsets which will be used in **Section 3**. Alignment. 
 
 ``` 
 python wikipedia_datasets.py --mode subset --old <previous_month> --new <new_month>
@@ -130,15 +133,9 @@ We suggest you to use bash file for mode 1. You can easily modify example bash f
 bash wikipedia_datasets.sh
 ```
 
-You will have final csv file in directory below.
-
-- ../TemporalWiki_datasets/Wikipedia_datasets
-
 ## 2. Wikidata
 
-Section 2 preprocess Wikidata from extracting entity id from Wikidata Dump to mapping id to corresponding string item.
-
-#### wikidata_datasets.py
+**Section 2** preprocess Wikidata from extracting entity id from Wikidata Dump to mapping id to corresponding string item.
 
 ``` 
 python wikidata_datasets.py --mode <mode> --old <previous_month> --new <new_month> --idx <0-100> --combine <0 or 1>
@@ -156,11 +153,11 @@ bash wikidata_datasets.sh
 
 The whole process will take less than a day (The mapping process takes a lot of time).
 
-## 3.0 Wikipedia Wikidata mapping
+## 3-0. Wikipedia Wikidata mapping
 
 If you want to do Unchanged mode, please skip this part.
 
-#### wikipedia_wikidata_mapping.py
+Please type following command in terminal.
 
 ``` 
 bash wikipedia_wikidata_crawling.sh
@@ -168,9 +165,7 @@ bash wikipedia_wikidata_crawling.sh
 
 ## 3. Aligning
 
-Section 3 aligned subsets file from Section 1 and Wikidata item file from Section 2 by mapping Wikipedia page-id and Wikidata entity id.
-
-#### evaluation_datasets.py
+**Section 3** aligned subsets file from **Section 1** and Wikidata item file from **Section 2** by mapping Wikipedia page-id and Wikidata entity id.
 
 ``` 
 python evaluation_datasets.py --mode <mode> --old <previous_month> --new <new_month>
@@ -178,7 +173,3 @@ python evaluation_datasets.py --mode <mode> --old <previous_month> --new <new_mo
 > mode : unchanged / updated / new   
 > old : year + month + date, e.g. 20210801   
 > new : year + month + date, e.g. 20210901   
-
-You will have final csv file in directory below.
-
-- ../TemporalWiki_datasets/Wikidata_datasets/<'previous_month'>\_<'new_month'>/<'mode'>/final_<'mode'>_item.csv

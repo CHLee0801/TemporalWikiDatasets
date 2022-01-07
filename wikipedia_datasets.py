@@ -104,6 +104,7 @@ def generate_subsets_csv(old_month, new_month):
         lst1.sort()
         for file in lst1:
             full_dir = dir1+'/'+file 
+            print(full_dir)
             data = pd.read_json(full_dir,lines=True)
             for index, row in data.iterrows():
                 id = row['id']

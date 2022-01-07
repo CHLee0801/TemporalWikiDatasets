@@ -11,8 +11,8 @@ def construct_generation_args():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--mode', type=str, default="unchanged", required=True, choices=SUPPORT_MODE)
-    parser.add_argument('--old', type=str, default='20210801')
-    parser.add_argument('--new', type=str, default='20210901')
+    parser.add_argument('--old', type=str, default='20211101')
+    parser.add_argument('--new', type=str, default='20211201')
     parser.add_argument('--idx', type=int, default=0)
     parser.add_argument('--combine', type=int, default=0)
 
