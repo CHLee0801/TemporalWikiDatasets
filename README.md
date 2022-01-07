@@ -77,7 +77,7 @@ It will take about less than 2 hours to download the file.
 
 Execute command.
 ```
-python -m wikiextractor.WikiExtractor <Wikipedia dump file>
+python -m wikiextractor.WikiExtractor <Wikipedia dump file> --json
 ```
 After that, "text" file will be generated. Please change this name to 'year + month + date', e.g. 20210801
 
@@ -155,6 +155,16 @@ bash wikidata_datasets.sh
 ```
 
 The whole process will take less than a day (The mapping process takes a lot of time).
+
+## 3.0 Wikipedia Wikidata mapping
+
+If you want to do Unchanged mode, please skip this part.
+
+#### wikipedia_wikidata_mapping.py
+
+``` 
+bash wikipedia_wikidata_crawling.sh
+```
 
 ## 3. Aligning
 

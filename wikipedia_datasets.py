@@ -15,13 +15,12 @@ tokenizer = GPT2Tokenizer.from_pretrained("gpt2-large")
 def construct_generation_args():
 
     parser = ArgumentParser()
-    parser.add_argument('--mode', default="subset", type=str, requires=True, choices=SUPPORT_MODE)
-    #parser.add_argument('--mode', default=0, type=int, requires=True)
-    parser.add_argument('--old', default='20210801', type=str, required=False)
-    parser.add_argument('--new', default='20210901', type=str, required=False)
-    parser.add_argument('--month', default="20210801", type=str, required=False)
+    parser.add_argument('--mode', default="subset", type=str, choices=SUPPORT_MODE)
+    parser.add_argument('--old', default='20211101', type=str, required=False)
+    parser.add_argument('--new', default='20211201', type=str, required=False)
+    parser.add_argument('--month', default="20211201", type=str, required=False)
     parser.add_argument('--tenth_digit', default=0, type=int, required=False)
-    arg = parser.paargrse_args()
+    arg = parser.parse_args()
     return arg
 
 
@@ -76,7 +75,6 @@ def get_difference(old, new):
 def generate_subsets_csv(old_month, new_month):
     data_dir1 = f"../TemporalWiki_datasets/Wikipedia_datasets/{new_month}" # the newer dump
     data_dir2 = f"../TemporalWiki_datasets/Wikipedia_datasets/{old_month}" # the old dump
-
     lst = os.listdir(data_dir1)
     lst_ = os.listdir(data_dir2)
     lst.sort()
@@ -106,7 +104,6 @@ def generate_subsets_csv(old_month, new_month):
         lst1.sort()
         for file in lst1:
             full_dir = dir1+'/'+file 
-            print(full_dir)
             data = pd.read_json(full_dir,lines=True)
             for index, row in data.iterrows():
                 id = row['id']
@@ -141,7 +138,7 @@ def generate_subsets_csv(old_month, new_month):
                     entry = [key,url,title,diff]
                     entries.append(entry)
     
-    output_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{data_dir2}_{data_dir1}_subset.csv"
+    output_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old_month}_{new_month}_subset.csv"
     pd.DataFrame(entries, columns=['id','url','title','text']).to_csv(output_dir, index=False) # save it as csv
 
 def wikipedia_csv_to_json(old, new):
@@ -272,7 +269,7 @@ def size_of_wikipedia(month):
     return cnt
 
 def main():
-    arg = construct_generation_args
+    arg = construct_generation_args()
 
     mode = arg.mode
 
