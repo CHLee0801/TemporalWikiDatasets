@@ -392,7 +392,7 @@ def name(old, new, idx, mode):
                 continue
             big_list.append([a1, a2, a3])
             new_id.append(i)
-            
+        
         with open(item_dir, "w") as write_json_file:
             json.dump(big_list, write_json_file, indent=4)
 

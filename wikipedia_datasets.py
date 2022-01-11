@@ -290,7 +290,7 @@ def main():
 
         wikipedia_size = size_of_wikipedia(month)
         generate_gpt2_data(month, tenth_digit)
-
+        
         data_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/{month}_gpt2"
         lst = os.listdir(data_dir)
         lst.sort()
@@ -303,6 +303,6 @@ def main():
             print("Generating GPT-2 training datasets for entire data is completed!") # Final Wikipedia datasets for training GPT-2
         else:
             print("Datasets", tenth_digit, "has been completed. Please wait for others to finish")
-
+        
 if __name__ == "__main__":
     main()

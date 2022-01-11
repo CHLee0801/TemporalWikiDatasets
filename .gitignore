@@ -2,3 +2,9 @@
 /Wikipedia_datasets/20211201
 /Wikipedia_datasets/20211101_gpt2
 /Wikipedia_datasets/20211201_gpt2
+/Wikidata_datasets/20211101
+/Wikidata_datasets/20211101_20211201
+/Wikidata_datasets/20211201
+Wikipedia_datasets/wikipedia_20211101_20211201_gpt2.csv
+Wikipedia_datasets/wikipedia_20211101_20211201_subset.csv
+Wikipedia_datasets/wikipedia_20211101_20211201_subset.json

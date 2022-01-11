@@ -52,7 +52,6 @@ def aligning(old, new, mode):
     with open(item_fname, "r") as read_json_3:
         item_list = json.load(read_json_3)
 
-    filtered_id = []
     filtered_name = []
 
     for j in range(len(id_list)):
@@ -140,13 +139,23 @@ def unchanged_filtering(old, new, mode):
             continue
         else:
             semi_list.append(i)
-
     random.shuffle(semi_list)
+    small = {}
+    semi_final_list = []
+    for i in semi_list:
+        if i[1] in small:
+            small[i[1]] += 1
+            if small[i[1]] > 100:
+                continue
+        else:
+            small[i[1]] = 1
+        semi_final_list.append(i)
+
     final_list = []
-    data_list = random.sample(range(len(semi_list)), 10000)
+    data_list = random.sample(range(len(semi_final_list)), 10000)
     for i in data_list:
         if i in data_list:
-            final_list.append(semi_list[i])
+            final_list.append(semi_final_list[i])
     
     output_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.scv"
 

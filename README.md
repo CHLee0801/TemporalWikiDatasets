@@ -59,7 +59,7 @@ mkdir unchanged_item
 
 Output would look like this.
 
-![Figure 2](https://user-images.githubusercontent.com/87512263/148153535-92d6ab22-43a0-405b-b9aa-f78fd9da30b7.png)
+![Figure 2](https://user-images.githubusercontent.com/87512263/148547865-43e9f730-32b1-43d6-9cb4-3cc5571c916c.png)
 
 ## 0-1. Wikipedia Dump Download
 
@@ -114,7 +114,7 @@ There are two types of generation at the end. One is GPT-2 training datasets, an
 ``` 
 python wikipedia_datasets.py --mode subset --old <previous_month> --new <new_month>
 ```
-**Generate datasets for only subsets**
+**Generate datasets for only subsets** (6 hours)
 > mode : subset (generate datasets for only subsets)   
 > old : year + month + date, e.g. 20210801   
 > new : year + month + date, e.g. 20210901   
@@ -155,7 +155,7 @@ The whole process will take less than a day (The mapping process takes a lot of 
 
 ## 3-0. Wikipedia Wikidata mapping
 
-If you want to do Unchanged mode, please skip this part.
+If you want to do Unchanged mode only, please skip this part.
 
 Please type following command in terminal.
 
