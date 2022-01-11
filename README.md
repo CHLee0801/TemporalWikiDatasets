@@ -59,7 +59,7 @@ mkdir unchanged_item
 
 Output would look like this.
 
-![Figure 2](https://user-images.githubusercontent.com/87512263/148547865-43e9f730-32b1-43d6-9cb4-3cc5571c916c.png)
+![Figure 2](https://user-images.githubusercontent.com/87512263/148547865-43e9f730-32b1-43d6-9cb4-3cc5571c916c.png){: width="250" height="400"}
 
 ## 0-1. Wikipedia Dump Download
 
