@@ -114,7 +114,7 @@ There are two types of generation at the end. One is GPT-2 training datasets, an
 ``` 
 python wikipedia_datasets.py --mode subset --old <previous_month> --new <new_month>
 ```
-**Generate datasets for only subsets** (6 hours)
+**Generate datasets for only subsets**
 > mode : subset (generate datasets for only subsets)   
 > old : year + month + date, e.g. 20210801   
 > new : year + month + date, e.g. 20210901   
