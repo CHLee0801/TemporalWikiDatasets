@@ -86,6 +86,14 @@ mv text <time_step>
 
 This extracting process takes about 6 hours.
 
+or Just using scripts for wikipedia dump
+
+Please type following command in terminal.
+
+``` 
+bash wikipedia_dump.sh 20211001
+```
+
 ## 0-2. Wikidata Dump Download
 
 Please choose [Wikidata Dump File](https://dumps.wikimedia.org/wikidatawiki/) in XML format (About 120 GB). You have to download for both time step (old_time_step, new_time_step).
@@ -106,6 +114,14 @@ python -m gensim.scripts.segment_wiki -i -f <Wikidata Dump file> -o <Transformed
 * It is important to write 'json.gz' at the end for your new file.
 
 It will take 2 days. 
+
+or Just using scripts for wikidata dump
+
+Please type following command in terminal.
+
+``` 
+bash wikidata_dump.sh 20211001
+```
 
 ## 1. Wikipedia
 
@@ -128,10 +144,16 @@ python wikipedia_datasets.py --mode entire --tenth_digit <0-16> --month <month>
 > tenth_digit : One number between 0-16 (There are 16 sets of Wikipedia bundle)   
 > month : year + month + date, e.g. 20210801   
 
-We suggest you to use bash file for mode 1. You can easily modify example bash file **wikipedia_datasets.sh** and type command below in terminal.
+We suggest you to use bash file for mode entire. You can easily modify example bash script file **wikipedia_gpt2_data.sh** and type command below in terminal.
 ``` 
-bash wikipedia_datasets.sh
+bash wikipedia_gpt2_data.sh
 ```
+
+If you want to use bash file for mode subset. You can easily use bash script file script file **wikipedia_gpt2_data_sub.sh** and type command below in terminal.
+``` 
+bash wikipedia_gpt2_data_sub.sh 20211001 20211201
+```
+
 
 ## 2. Wikidata
 
@@ -146,9 +168,9 @@ python wikidata_datasets.py --mode <mode> --old <previous_month> --new <new_mont
 > idx : One number between 0-100 (Preprocessing is held in every million entities of Wikidata)   
 > combine : 0 (Not combining created sets by idx) / 1 (Combine all the sets to one json file)   
 
-We suggest you to use bash file for this part. You can easily modify example bash file **wikidata_datasets.sh** and type command below in terminal.
+We suggest you to use bash file for this part. You can easily modify example bash script file **wikidata_datasets.sh** and type command below in terminal.
 ``` 
-bash wikidata_datasets.sh
+bash wikidata_datasets.sh 20210801 20210901
 ```
 
 The whole process will take less than a day (The mapping process takes a lot of time).
