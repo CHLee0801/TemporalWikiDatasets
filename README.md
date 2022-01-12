@@ -91,7 +91,7 @@ or Just using scripts for wikipedia dump
 Please type following command in terminal.
 
 ``` 
-bash wikipedia_dump.sh 20211001
+bash wikipedia_dump.sh <time_step>
 ```
 
 ## 0-2. Wikidata Dump Download
@@ -120,7 +120,7 @@ or Just using scripts for wikidata dump
 Please type following command in terminal.
 
 ``` 
-bash wikidata_dump.sh 20211001
+bash wikidata_dump.sh <time_step>
 ```
 
 ## 1. Wikipedia
@@ -151,7 +151,7 @@ bash wikipedia_gpt2_data.sh
 
 If you want to use bash file for mode subset. You can easily use bash script file script file **wikipedia_gpt2_data_sub.sh** and type command below in terminal.
 ``` 
-bash wikipedia_gpt2_data_sub.sh 20211001 20211201
+bash wikipedia_gpt2_data_sub.sh <old_time_step> <new_time_step>
 ```
 
 
@@ -170,7 +170,7 @@ python wikidata_datasets.py --mode <mode> --old <previous_month> --new <new_mont
 
 We suggest you to use bash file for this part. You can easily modify example bash script file **wikidata_datasets.sh** and type command below in terminal.
 ``` 
-bash wikidata_datasets.sh 20210801 20210901
+bash wikidata_datasets.sh <old_time_step> <new_time_step>
 ```
 
 The whole process will take less than a day (The mapping process takes a lot of time).
