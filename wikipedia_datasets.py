@@ -142,8 +142,89 @@ def generate_subsets_csv(old_month, new_month):
     output_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old_month}_{new_month}_subset.csv"
     pd.DataFrame(entries, columns=['id','url','title','text']).to_csv(output_dir, index=False) # save it as csv
 
-def wikipedia_csv_to_json(old, new):
-    file_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old}_{new}_subset.csv"
+def generate_unchanged_csv(old_month, new_month):
+    data_dir1 = f"../TemporalWiki_datasets/Wikipedia_datasets/{new_month}" # the newer dump
+    data_dir2 = f"../TemporalWiki_datasets/Wikipedia_datasets/{old_month}" # the old dump
+    lst = os.listdir(data_dir1)
+    lst_ = os.listdir(data_dir2)
+    lst.sort()
+    lst_.sort()
+
+    old_articles = {}
+    new_articles = {}
+
+    for dir in lst:
+        dir1 = data_dir1+'/'+dir 
+        lst1 = os.listdir(dir1)
+        lst1.sort()
+        for file in lst1:
+            full_dir = dir1+'/'+file 
+            print(full_dir)
+            data = pd.read_json(full_dir,lines=True)
+            for index, row in data.iterrows():
+                id = row['id']
+                url = row['url']
+                title = row['title']
+                text = row['text']
+                new_articles[id] = [url,title,text]
+
+    for dir in lst_:
+        dir1 = data_dir2+'/'+dir 
+        lst1 = os.listdir(dir1)
+        lst1.sort()
+        for file in lst1:
+            full_dir = dir1+'/'+file 
+            print(full_dir)
+            data = pd.read_json(full_dir,lines=True)
+            for index, row in data.iterrows():
+                id = row['id']
+                url = row['url']
+                title = row['title']
+                text = row['text']
+                old_articles[id] = [url,title,text]
+
+    new_article_id = [0]
+    entries = []
+    unchanged_entries = []
+    whole = []
+    subset = []
+
+    cnt=0
+
+    for key in new_articles:
+        if cnt%1000==0:
+            print(key/70000000)
+        cnt+=1
+        row = new_articles[key]
+        url = row[0]
+        title = row[1]
+        new_article = row[2]
+        if key not in old_articles:
+            new_article_id.append(key)
+            entry = [key,url,title,new_article.replace('\n', '')]
+            entries.append(entry)
+        else:
+            old_row = old_articles[key]
+            old_article = old_row[2]
+            if new_article!='':
+                diff, same = get_difference(old_article, new_article)
+                whole.append(len(new_article))
+                subset.append(len(diff))
+                if diff!='':
+                    entry = [key,url,title,diff]
+                    entries.append(entry)
+                    if same!='':
+                        unchanged_entries.append([key,url,title,same])
+                else:
+                    unchanged_entries.append([key,url,title,new_article])
+    output_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old_month}_{new_month}_unchanged.csv"    
+    pd.DataFrame(unchanged_entries, columns=['id','url','title','text']).to_csv(output_dir, index=False)
+def wikipedia_csv_to_json(old, new, key):
+    if key == 0:
+        ver = "subset"
+    else:
+        ver = "unchanged"
+    file_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old}_{new}_{ver}.csv"
     df = pd.read_csv(file_dir, encoding='utf-8')
 
     wikipedia_subsets = {}
@@ -159,7 +240,7 @@ def wikipedia_csv_to_json(old, new):
         else:
             wikipedia_subsets[id].append(text)
 
-    output_file_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old}_{new}_subset.json"
+    output_file_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old}_{new}_{ver}.json"
     with open(output_file_dir, "w") as write_json_file:
         json.dump(wikipedia_subsets, write_json_file, indent=4)
     
@@ -279,8 +360,10 @@ def main():
         new = arg.new # new : year + month + date, e.g. 20210901
         print("Generating subset mode. Make sure you typed in \"old\" and \"new\" in command line")
         generate_subsets_csv(old, new)
-        wikipedia_csv_to_json(old, new)
-        print("Generating subsets in csv, json file completed!") # Ready to be aligned with Wikidata
+        wikipedia_csv_to_json(old, new, 0)
+        generate_unchanged_csv(old, new)
+        wikipedia_csv_to_json(old, new, 1)
+        print("Generating subsets and unchanged in csv, json file completed!") # Ready to be aligned with Wikidata
 
         generate_gpt2_subset(old, new)
         print("Generating GPT-2 training datasets for subsets is completed!") # Final Wikipedia subsets for training GPT-2

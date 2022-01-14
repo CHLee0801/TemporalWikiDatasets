@@ -8,8 +8,8 @@ def construct_generation_args():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--idx', type=int, default=0)
-    parser.add_argument('--old', type=str, default='20210801')
-    parser.add_argument('--new', type=str, default='20210901')
+    parser.add_argument('--old', type=str, default='20211101')
+    parser.add_argument('--new', type=str, default='20211201')
     arg = parser.parse_args()
     
     return arg
@@ -39,6 +39,8 @@ def crawling(old, new, idx):
             soup = BeautifulSoup(html, 'html.parser')
             a = soup.select_one("#t-wikibase > a")
             wikidata_id = str(a)[72:-92]
+            if "#sitelinks-wikipedia" in wikidata_id:
+                wikidata_id = wikidata_id[:-20]
             wikipedia_to_wikidata[wikidata_id] = wikipedia_id[i]
         except:
             time.sleep(1)
