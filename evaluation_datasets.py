@@ -86,10 +86,16 @@ def aligning(old, new, mode):
                     continue
                 obj += i
             filtered_name.append([sub, rel, obj])
-
+    final_list = []
+    small = {}
+    for i in filtered_name:
+        if i in small:
+            continue
+        small[i] = 1
+        final_list.append(i)
     output_item_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.scv"
     
-    pd.DataFrame(filtered_name, columns=['subject','relation','objective']).to_csv(output_item_dir, index=False)
+    pd.DataFrame(final_list, columns=['subject','relation','objective']).to_csv(output_item_dir, index=False)
 
 def main():
     arg = construct_generation_args()
