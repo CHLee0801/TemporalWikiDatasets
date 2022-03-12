@@ -3,7 +3,7 @@ import json
 from qwikidata.json_dump import WikidataJsonDump
 from wikidata.client import Client
 
-SUPPORT_MODE = ["unchanged", "new", "updated"]
+SUPPORT_MODE = ["unchanged", "changed"]
 
 client = Client()
 
@@ -90,7 +90,7 @@ def id(old, new, idx, mode):
         with open(output_dir, "w") as write_json_file:
             json.dump(unchanged_relation, write_json_file, indent=4)
 
-    elif mode == "new":
+    else:
         new_relation = []
         for entity in previous_python:
             if entity in present_python:
@@ -103,11 +103,7 @@ def id(old, new, idx, mode):
                         if [entity, second_relation[0], second_relation[1]] not in new_relation:
                             new_relation.append([entity, second_relation[0], second_relation[1]])
 
-        with open(output_dir, "w") as write_json_file:
-            json.dump(new_relation, write_json_file, indent=4)
-
-    elif mode == "updated":
-        updated_lama = []
+        updated_relation = []
         for entity in previous_python:
             if entity in present_python:
                 small = []
@@ -143,14 +139,24 @@ def id(old, new, idx, mode):
                             if len(second_relation[1]) > 15:
                                 continue
                             if object != second_relation[1]:
-                                updated_lama.append([entity] + first_relation + [second_relation[1]])
+                                updated_relation.append([entity] + first_relation + [second_relation[1]])
                                 included.append(second_relation)
                 for i in new_pres:
                     if i not in included:
-                        updated_lama.append([entity] + i)
+                        updated_relation.append([entity] + i)
 
+        changed_relation = []
+        changed_dic = {}
+        for new in new_relation:
+            sentence = new[0] + new[1] + new[2]
+            if sentence not in changed_dic:
+                changed_dic[sentence] = 1
+                changed_relation.append(new)
+        for update in updated_relation:
+            changed_relation.append(update)
+        
         with open(output_dir, "w") as write_json_file:
-            json.dump(updated_lama, write_json_file, indent=4)     
+            json.dump(changed_relation, write_json_file, indent=4)     
 
 def name(old, new, idx, mode):
     id_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/{mode}_id/{mode}_{idx}_id.json"
@@ -163,7 +169,7 @@ def name(old, new, idx, mode):
     entity_dict = {}
     big_list = []
     new_id = []
-    if mode == "updated":
+    if mode == "changed":
         for i in id_list:
             if len(i) == 3:
                 sub = i[0]
