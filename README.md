@@ -162,7 +162,7 @@ bash wikipedia_gpt2_data_sub.sh <old_time_step> <new_time_step>
 ``` 
 python wikidata_datasets.py --mode <mode> --old <previous_month> --new <new_month> --idx <0-100> --combine <0 or 1>
 ```
-> mode : unchanged / updated / new   
+> mode : unchanged / changed   
 > old : year + month + date, e.g. 20210801   
 > new : year + month + date, e.g. 20210901   
 > idx : One number between 0-100 (Preprocessing is held in every million entities of Wikidata)   
@@ -192,6 +192,6 @@ bash wikipedia_wikidata_crawling.sh
 ``` 
 python evaluation_datasets.py --mode <mode> --old <previous_month> --new <new_month>
 ```
-> mode : unchanged / updated / new   
+> mode : unchanged / changed   
 > old : year + month + date, e.g. 20210801   
 > new : year + month + date, e.g. 20210901   
