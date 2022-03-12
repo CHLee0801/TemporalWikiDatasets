@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import time
 import random
 
-SUPPORT_MODE=["unchanged", "new", "updated"]
+SUPPORT_MODE=["unchanged", "changed"]
 
 def construct_generation_args():
 
@@ -93,19 +93,72 @@ def aligning(old, new, mode):
             continue
         small[i] = 1
         final_list.append(i)
-    output_item_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.scv"
+    output_item_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/filtered_{mode}_item.scv"
     
     pd.DataFrame(final_list, columns=['subject','relation','objective']).to_csv(output_item_dir, index=False)
+
+def post_processing(old, new, mode):
+    filtered = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/filtered_{mode}_item.scv"
+    filtered_csv = pd.read_csv(filtered)
+    filtered_list = pd.read_csv(filtered_csv)
+    
+    first_post_process_list = []
+    dic = {}
+    dic2 = {}
+    dic3 = {}
+    for i in filtered_list:
+        sentence = i[0] + i[1] + i[2]
+        if sentence in dic:
+            continue
+        dic[sentence] = 1
+        sub, rel, obj = i[0], i[1], i[2]
+        sub = sub.lower()
+        rel = rel.lower()
+        obj = obj.lower()
+        if sub in obj or obj in sub:
+            continue
+        if len(obj.split()) > 5:
+            continue
+        first_post_process_list.append(i)
+        
+    # Keep proportion of Subject under 1%
+    proportion_1 = len(first_post_process_list) // 100
+    random.shuffle(first_post_process_list)
+    second_post_process_list = []
+    for i in first_post_process_list:
+        if i[0] in dic2:
+            dic2[i[0]] += 1
+            if dic2[i[0]] > proportion_1:
+                continue
+        else:
+            dic2[i[0]] = 1
+        second_post_process_list.append(i)
+        
+    # Keep proportion of Relation under 5%
+    proportion_2 = len(second_post_process_list) // 20
+    final_list = []
+    for i in second_post_process_list:
+        if i[1] in dic3:
+            dic3[i[1]] += 1
+            if dic3[i[1]] > proportion_2:
+                continue
+        else:
+            dic3[i[1]] = 1
+        final_list.append(i)
+    
+    output_dir = f"../TemporalWiki_datasets/Wikidata_datasets/{old}_{new}/{mode}/final_{mode}_item.scv"
+    pd.DataFrame(final_list, columns=['subject','relation','object']).to_csv(output_dir, index=False)
 
 def main():
     arg = construct_generation_args()
     
-    mode = arg.mode # mode : unchanged / updated / new
+    mode = arg.mode # mode : unchanged / changed
     old = arg.old # old : year + month + date, e.g. 20210801
     new = arg.new # new : year + month + date, e.g. 20210901
-    if mode != "unchanged":
+    if mode == "changed":
         combine_json(old, new)
     aligning(old, new, mode) # Map Wikipedia to Wikidata
+    post_processing(old, new, mode)
 
 if __name__ == '__main__':
     main()
