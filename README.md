@@ -39,16 +39,10 @@ mkdir <new_time_step>
 mkdir <old_time_step>_<new_time_step>
 
 cd <old_time_step>_<new_time_step>
-mkdir new
-cd new
-mkdir new_id
-mkdir new_item
-
-cd ../
-mkdir updated
-cd updated
-mkdir updated_id
-mkdir updated_item
+mkdir changed
+cd changed
+mkdir changed_id
+mkdir changed_item
 
 cd ../
 mkdir unchanged
