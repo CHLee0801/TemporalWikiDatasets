@@ -2,6 +2,7 @@ import argparse
 import json
 from qwikidata.json_dump import WikidataJsonDump
 from wikidata.client import Client
+import os
 
 SUPPORT_MODE = ["unchanged", "changed"]
 
@@ -445,6 +446,26 @@ def main():
     new = arg.new # new : year + month + date, e.g. 20210901
     idx = arg.idx # idx : One number between 0-100 (Preprocessing is held in every million entities of Wikidata)
     combine = arg.combine # combine : 0 (Not combining created sets by idx) / 1 (Combine all the sets to one json file)
+
+    path = f"Wikidata_datasets/"
+    try:
+        os.makedirs(path+old, exist_ok=False)
+    except:
+        pass
+    try:
+        os.makedirs(path+new, exist_ok=False)
+    except:
+        pass
+    try:
+        os.makedirs(path+old+"_"+new, exist_ok=False)
+        os.makedirs(path+old+"_"+new+"/changed", exist_ok=False)
+        os.makedirs(path+old+"_"+new+"/changed/changed_id", exist_ok=False)
+        os.makedirs(path+old+"_"+new+"/changed/changed_item", exist_ok=False)
+        os.makedirs(path+old+"_"+new+"/unchanged", exist_ok=False)
+        os.makedirs(path+old+"_"+new+"/unchanged/unchanged_id", exist_ok=False)
+        os.makedirs(path+old+"_"+new+"/unchanged/unchanged_item", exist_ok=False)
+    except:
+        pass
 
     if idx != -1:
         extraction(old, idx) # Extract Wikidata id of previous month

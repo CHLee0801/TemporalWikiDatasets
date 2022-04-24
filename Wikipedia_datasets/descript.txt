@@ -1,0 +1,7 @@
+This folder is for Wikipedia Dumps to be located.
+
+Wikipedia_datasets
+---{old_month}
+---{old_month}_gpt2
+---{new_month}
+---{new_month}_gpt2

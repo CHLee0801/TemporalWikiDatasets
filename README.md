@@ -19,42 +19,6 @@ conda activate twiki
 pip install -r requirements.txt
 ```
 
-* Organize directories
-
-You have to choose two time step for Wikipedia and Wikidata (time step should be same for both).
-
-> old_time_step : year + month + date, e.g. 20210801   
-> new_time_step : year + month + date, e.g. 20210901
-
-Then follow the command.
-```
-cd Wikipedia_datasets
-mkdir <old_time_step>_gpt2
-mkdir <new_time_step>_gpt2
-
-cd ../
-cd Wikidata_datasets
-mkdir <old_time_step>
-mkdir <new_time_step>
-mkdir <old_time_step>_<new_time_step>
-
-cd <old_time_step>_<new_time_step>
-mkdir changed
-cd changed
-mkdir changed_id
-mkdir changed_item
-
-cd ../
-mkdir unchanged
-cd unchanged
-mkdir unchanged_id
-mkdir unchanged_item
-```
-
-Output would look like this.
-
-<img src="https://user-images.githubusercontent.com/87512263/148547865-43e9f730-32b1-43d6-9cb4-3cc5571c916c.png" width="250" height="400">
-
 ## 0-1. Wikipedia Dump Download
 
 Please download [Wikipedia Dump File](https://dumps.wikimedia.org/enwiki/) in XML format (About 18 GB). You have to download for both time step (old_time_step, new_time_step).

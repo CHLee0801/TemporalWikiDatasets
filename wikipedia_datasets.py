@@ -23,7 +23,6 @@ def construct_generation_args():
     arg = parser.parse_args()
     return arg
 
-
 def preprocess(lst):
     new_lst = []
     ref_lst = []
@@ -219,6 +218,7 @@ def generate_unchanged_csv(old_month, new_month):
                     unchanged_entries.append([key,url,title,new_article])
     output_dir = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old_month}_{new_month}_unchanged.csv"    
     pd.DataFrame(unchanged_entries, columns=['id','url','title','text']).to_csv(output_dir, index=False)
+
 def wikipedia_csv_to_json(old, new, key):
     if key == 0:
         ver = "subset"
@@ -350,6 +350,112 @@ def size_of_wikipedia(month):
         cnt += 1
     return cnt
 
+def preprocess_corpus(text):
+    # from full file
+    text = text.replace("&amp;", "")
+    text = text.replace("&amp", "")
+    text = re.sub('lt(.)*gt;', '', text)
+    text = text.replace('&gt;', "")
+    text = text.replace('&g', "")
+    text = text.replace('gt;', "")
+    text = text.replace('.&', ". ")
+    text = text.replace(',&', ", and")
+    text = text.replace('&lt;', "")
+    text = text.replace('&lt', "")
+    text = text.replace('\\new', "")
+    text = text.replace('\cresc', "")
+    text = text.replace('\override', "")
+    text = text.replace('\\relative', "")
+    text = text.replace('\clef', "")
+    text = text.replace('\!', "")
+    text = text.replace('\key', "")
+    text = text.replace('\\time', "")
+    text = text.replace('\once', "")
+    text = text.replace('\ottava', "")
+    text = text.replace('\set', "")
+    text = text.replace('<unk>', "")
+    text = text.replace('\\bar', "")
+    text = text.replace('\stemUp', "")
+    text = text.replace('\markup', "")
+    text = text.replace('\stemDown', "")
+    text = text.replace('\\voice', "")
+    text = text.replace(' [. ', " ")
+    text = text.replace(' [. ', " ")
+    text = text.replace(' ]. ', " ")
+    text = text.replace('  [.', " ")
+    text = re.sub('-[0-9]+.[0-9]+.', '', text)
+    text = re.sub('[0-9]+.[0-9]+.', '', text)
+    text = re.sub('style=(.)* ', '', text)
+    text = text.replace('.   ', ".")
+    for _ in range(5):
+        text = text.replace('  ', " ")
+    text = text.replace('..', ".")
+    text = text.replace('. . ', " ")
+    text = text.replace('. . ', " ")
+    text = re.sub('!align=(.)*|', '', text)
+    text = re.sub('!align=(.)* ', '', text)
+    text = re.sub('valign=(.)*|', '', text)
+    text = re.sub('valign=(.)* ', '', text)
+    text = re.sub('align=(.)*|', '', text)
+    text = re.sub('align=(.)* ', '', text)
+    text = re.sub('colspan=(.)*|', '', text)
+    text = re.sub('colspan=(.)* ', '', text)
+    text = re.sub('rowspan=(.)*|', '', text)
+    text = re.sub('rowspan=(.)* ', '', text)
+    text = re.sub('!width=(.)*|', '', text)
+    text = text.replace('width= ', "")
+    for _ in range(5):
+        text = text.replace('..', ".")
+    text = text.replace('.!', ".")
+    text = text.replace('. ', '.')
+    text = text.replace('.', '. ')
+    text = text.strip()
+    if len(text) == 1 and (text[0] == '.' or text[0] == '[' or text[0] == ']'):
+        text = ""
+    return text
+
+def final_preprocess(old_month, new_month, mode):
+    if mode == "subset":
+        fname = f"../TemporalWiki_datasets/Wikipedia_datasets/wikipedia_{old_month}_{new_month}_gpt2.csv"
+    else:
+        fname = f"../TemporalWiki_datasets/Wikipedia_datasets/{old_month}_gpt2/wikipedia_{old_month}_gpt2.csv"
+    s_dir = pd.read_csv(fname)
+    text_file = s_dir.values.tolist()
+
+    new_list = []
+    for i in text_file: 
+        new_list.append([preprocess_corpus(str(i[0]))])
+
+    MAX_LENGTH = 1024
+    out = []
+    now = []
+    rest = []
+    for t in new_list:
+        try:
+            target_str = [' ' + str(t)]
+            text_ids = tokenizer(target_str)['input_ids'][0]
+        except:
+            continue
+        for ids in text_ids:
+            now.append(ids)
+        while len(now) >= MAX_LENGTH:
+            rest = now[MAX_LENGTH:]
+            now = now[:MAX_LENGTH]
+            now_str = tokenizer.decode(now)
+            if now_str[0] == ' ':
+                now_str = now_str[1:]
+            out.append([now_str])
+            now = []
+            for i in rest:
+                now.append(i)
+            rest = []
+
+    now_str = tokenizer.decode(now)
+    if now_str[0] == ' ':
+        now_str = now_str[1:]
+    out.append([now_str])
+    pd.DataFrame(out, columns=['text']).to_csv(fname, index=False)
+
 def main():
     arg = construct_generation_args()
 
@@ -366,11 +472,17 @@ def main():
         print("Generating subsets and unchanged in csv, json file completed!") # Ready to be aligned with Wikidata
 
         generate_gpt2_subset(old, new)
+        final_preprocess(old, new, mode)
         print("Generating GPT-2 training datasets for subsets is completed!") # Final Wikipedia subsets for training GPT-2
     elif mode == "entire": # mode : 1 (generate datasets for entire datasets)
         tenth_digit = arg.tenth_digit # tenth_digit : One number between 0-16 (There are 16 sets of Wikipedia bundle)
         month = arg.month # month : year + month + date, e.g. 20210801
-
+        try:
+            w_path = f"Wikipedia_datasets/{month}_gpt2"
+            os.makedirs(w_path, exist_ok=False)
+        except:
+            pass
+        
         wikipedia_size = size_of_wikipedia(month)
         generate_gpt2_data(month, tenth_digit)
         
@@ -383,6 +495,7 @@ def main():
         if wikipedia_size == cnt:
             combine_csv(month)
             print("Datasets", tenth_digit, "has been completed.")
+            final_preprocess(month, "0", mode)
             print("Generating GPT-2 training datasets for entire data is completed!") # Final Wikipedia datasets for training GPT-2
         else:
             print("Datasets", tenth_digit, "has been completed. Please wait for others to finish")
