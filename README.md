@@ -36,18 +36,18 @@ Execute command.
 ```
 python -m wikiextractor.WikiExtractor <Wikipedia dump file> --json
 ```
+
+This extracting process takes about 6 hours.
+
 After that, "text" file will be generated. Please change this name to 'year + month + date', e.g. 20210801
 ```
 cd Wikipedia_datasets
 mv text <time_step>
 ```
 
-This extracting process takes about 6 hours.
-
-or Just using scripts for wikipedia dump
+or You can use scripts for wikipedia dump
 
 Please type following command in terminal.
-
 ``` 
 bash wikipedia_dump.sh <time_step>
 ```
@@ -73,7 +73,7 @@ python -m gensim.scripts.segment_wiki -i -f <Wikidata Dump file> -o <Transformed
 
 It will take 2 days. 
 
-or Just using scripts for wikidata dump
+or You can use scripts for wikidata dump.
 
 Please type following command in terminal.
 
@@ -131,7 +131,7 @@ We suggest you to use bash file for this part. You can easily modify example bas
 bash wikidata_datasets.sh <old_time_step> <new_time_step>
 ```
 
-The whole process will take less than a day (The mapping process takes a lot of time).
+The whole process will take less than a day (The mapping process takes a lots of time).
 
 ## 3-0. Wikipedia Wikidata mapping
 
