@@ -432,7 +432,7 @@ def final_preprocess(old_month, new_month, mode):
     rest = []
     for t in new_list:
         try:
-            target_str = [' ' + str(t)]
+            target_str = [' ' + str(t[0])]
             text_ids = tokenizer(target_str)['input_ids'][0]
         except:
             continue
